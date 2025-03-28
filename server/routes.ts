@@ -40,11 +40,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Unlock a topic
   app.post("/api/topics/:id/unlock", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
+    // Removed authentication check for our mock approach
     try {
+      console.log(`Unlocking topic ID: ${req.params.id}`);
       const topicId = parseInt(req.params.id);
       const updatedTopic = await storage.unlockTopic(topicId);
       
@@ -52,40 +50,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Topic not found" });
       }
       
+      console.log("Topic unlocked successfully:", updatedTopic);
       res.json(updatedTopic);
     } catch (error) {
-      res.status(500).json({ message: "Failed to unlock topic" });
+      console.error("Error unlocking topic:", error);
+      res.status(500).json({ message: "Failed to unlock topic", error: String(error) });
     }
   });
 
   // Get user progress
   app.get("/api/progress", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     try {
-      const userId = req.user.id;
+      let userId: number;
+      
+      if (req.isAuthenticated()) {
+        // If authenticated, use the logged-in user's ID
+        userId = req.user.id;
+      } else {
+        // For mock approach, use user ID 1
+        userId = 1;
+        console.log("Using mock user ID 1 for all progress fetch");
+      }
+      
+      console.log(`Fetching all progress for userId: ${userId}`);
       const progress = await storage.getAllUserProgress(userId);
+      console.log(`Found ${progress.length} progress records`);
       res.json(progress);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch progress" });
+      console.error("Error fetching all progress:", error);
+      res.status(500).json({ message: "Failed to fetch progress", error: String(error) });
     }
   });
 
   // Get progress for a specific topic
   app.get("/api/progress/:topicId", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     try {
-      const userId = req.user.id;
+      let userId: number;
+      
+      if (req.isAuthenticated()) {
+        // If authenticated, use the logged-in user's ID
+        userId = req.user.id;
+      } else {
+        // For mock approach, use user ID 1
+        userId = 1;
+        console.log("Using mock user ID 1 for progress fetch");
+      }
+      
       const topicId = parseInt(req.params.topicId);
+      console.log(`Fetching progress for userId: ${userId}, topicId: ${topicId}`);
+      
       const progress = await storage.getProgressByUserAndTopic(userId, topicId);
       
       if (!progress) {
         // Return an empty progress object if none exists
+        console.log(`No progress found, returning default progress for userId: ${userId}, topicId: ${topicId}`);
         return res.json({
           userId,
           topicId,
@@ -97,24 +115,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      console.log("Progress fetched:", progress);
       res.json(progress);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch progress" });
+      console.error("Error fetching progress:", error);
+      res.status(500).json({ message: "Failed to fetch progress", error: String(error) });
     }
   });
 
   // Update progress for a topic
   app.post("/api/progress/:topicId", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     try {
-      const userId = req.user.id;
+      // Modified to accept userId directly from the request body for our mock approach
+      let userId: number;
+      
+      if (req.isAuthenticated()) {
+        // If authenticated, use the logged-in user's ID
+        userId = req.user.id;
+      } else if (req.body.userId) {
+        // Otherwise, use the ID from the request body (for our mock user approach)
+        userId = parseInt(req.body.userId);
+        console.log(`Using userId from request body: ${userId}`);
+      } else {
+        return res.status(401).json({ message: "Unauthorized - no user ID provided" });
+      }
+      
       const topicId = parseInt(req.params.topicId);
+      console.log(`Updating progress for userId: ${userId}, topicId: ${topicId}`);
       
       // Validate request body
       const updateSchema = z.object({
+        userId: z.number().optional(),
         watchCompleted: z.boolean().optional(),
         testCompleted: z.boolean().optional(),
         practiceCompleted: z.boolean().optional(),
@@ -122,22 +153,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         starsEarned: z.number().optional(),
       });
       
+      // Remove userId from the data before passing to updateProgress
       const validatedData = updateSchema.parse(req.body);
+      const { userId: _, ...updateData } = validatedData;
       
-      const updatedProgress = await storage.updateProgress(userId, topicId, validatedData);
+      const updatedProgress = await storage.updateProgress(userId, topicId, updateData);
+      console.log("Progress updated:", updatedProgress);
       
       // If stars were earned, update the user's total stars
-      if (validatedData.starsEarned !== undefined) {
+      if (updateData.starsEarned !== undefined) {
         const user = await storage.getUser(userId);
         if (user) {
           // Use 0 if user.stars is null
-          await storage.updateUserStars(userId, (user.stars ?? 0) + validatedData.starsEarned);
+          const updatedUser = await storage.updateUserStars(userId, (user.stars ?? 0) + updateData.starsEarned);
+          console.log(`Updated user stars: ${updatedUser?.stars}`);
         }
       }
       
       res.json(updatedProgress);
     } catch (error) {
-      res.status(500).json({ message: "Failed to update progress" });
+      console.error("Error updating progress:", error);
+      res.status(500).json({ message: "Failed to update progress", error: String(error) });
     }
   });
 

@@ -58,8 +58,8 @@ const IslandMap: React.FC<IslandMapProps> = ({ grade, activeTopic }) => {
             middle: "#7ED957", 
             top: "#66C3FF" 
           }}
-          isLocked={numberTopics.length === 0 || numberTopics[0].isLocked}
-          isActive={activeTopicData?.category === 'Numbers'}
+          isLocked={numberTopics.length === 0 || !!numberTopics[0].isLocked}
+          isActive={activeTopicData?.category === 'Numbers' || false}
           topic={numberTopics[0]}
         />
       </Link>
@@ -76,8 +76,8 @@ const IslandMap: React.FC<IslandMapProps> = ({ grade, activeTopic }) => {
             middle: "#F25C5C", 
             top: "#B088F9" 
           }}
-          isLocked={additionTopics.length === 0 || additionTopics[0].isLocked}
-          isActive={activeTopicData?.category === 'Addition'}
+          isLocked={additionTopics.length === 0 || !!additionTopics[0].isLocked}
+          isActive={activeTopicData?.category === 'Addition' || false}
           topic={additionTopics[0]}
         />
       </Link>
@@ -87,14 +87,14 @@ const IslandMap: React.FC<IslandMapProps> = ({ grade, activeTopic }) => {
         <Island 
           id="shapes"
           name="Shapes"
-          position={{ bottom: "25%", left: "25%" }}
+          position={{ top: "65%", left: "28%" }}
           size={{ width: "36", height: "28" }}
           colors={{ 
             base: "#F25C5C", 
             middle: "#FFD166"
           }}
-          isLocked={shapeTopics.length === 0 || shapeTopics[0].isLocked}
-          isActive={activeTopicData?.category === 'Shapes'}
+          isLocked={shapeTopics.length === 0 || !!shapeTopics[0].isLocked}
+          isActive={activeTopicData?.category === 'Shapes' || false}
           topic={shapeTopics[0]}
         />
       </Link>
@@ -104,14 +104,14 @@ const IslandMap: React.FC<IslandMapProps> = ({ grade, activeTopic }) => {
         <Island 
           id="time"
           name="Time"
-          position={{ bottom: "20%", right: "25%" }}
+          position={{ top: "65%", right: "28%" }}
           size={{ width: "36", height: "28" }}
           colors={{ 
             base: "#B088F9", 
             middle: "#66C3FF"
           }}
-          isLocked={timeTopics.length === 0 || timeTopics[0].isLocked}
-          isActive={activeTopicData?.category === 'Time'}
+          isLocked={timeTopics.length === 0 || !!timeTopics[0].isLocked}
+          isActive={activeTopicData?.category === 'Time' || false}
           topic={timeTopics[0]}
         />
       </Link>

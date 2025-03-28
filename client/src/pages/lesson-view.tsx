@@ -41,13 +41,33 @@ export default function LessonView() {
   // Mutation to update progress
   const updateProgressMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest("POST", `/api/progress/${topicId}`, {
-        watchCompleted: true,
-        starsEarned: 1, // Earn 1 star for completing the lesson
-      });
+      try {
+        // Using the mock user ID = 1 since we removed auth dependency
+        const mockUserId = 1;
+        
+        console.log("Updating progress for lesson:", {
+          topicId,
+          userId: mockUserId,
+          watchCompleted: true,
+          starsEarned: 1
+        });
+        
+        return apiRequest("POST", `/api/progress/${topicId}`, {
+          userId: mockUserId,
+          watchCompleted: true,
+          starsEarned: 1, // Earn 1 star for completing the lesson
+        });
+      } catch (error) {
+        console.error("Error updating progress:", error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Progress updated successfully:", data);
       queryClient.invalidateQueries({ queryKey: [`/api/progress/${topicId}`] });
+    },
+    onError: (error) => {
+      console.error("Failed to update progress:", error);
     }
   });
   

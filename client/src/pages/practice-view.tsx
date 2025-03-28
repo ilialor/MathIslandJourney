@@ -25,13 +25,33 @@ export default function PracticeView() {
   // Mutation to update progress
   const updateProgressMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest("POST", `/api/progress/${topicId}`, {
-        practiceCompleted: true,
-        starsEarned: 1, // Earn 1 star for completing practice
-      });
+      try {
+        // Using the mock user ID = 1 since we removed auth dependency
+        const mockUserId = 1;
+        
+        console.log("Updating progress for practice:", {
+          topicId,
+          userId: mockUserId,
+          practiceCompleted: true,
+          starsEarned: 1
+        });
+        
+        return apiRequest("POST", `/api/progress/${topicId}`, {
+          userId: mockUserId,
+          practiceCompleted: true,
+          starsEarned: 1, // Earn 1 star for completing practice
+        });
+      } catch (error) {
+        console.error("Error updating practice progress:", error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Practice progress updated successfully:", data);
       queryClient.invalidateQueries({ queryKey: [`/api/progress/${topicId}`] });
+    },
+    onError: (error) => {
+      console.error("Failed to update practice progress:", error);
     }
   });
   

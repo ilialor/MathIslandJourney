@@ -22,8 +22,7 @@ const Island: React.FC<IslandProps> = ({
     <motion.div 
       className={`absolute island-shadow ${islandClasses}`}
       style={{ 
-        top: position.top, 
-        left: position.left, 
+        ...position,
         width: size.width, 
         height: size.height 
       }}

@@ -41,29 +41,64 @@ export default function TeachView() {
   // Mutation to update progress
   const updateProgressMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest("POST", `/api/progress/${topicId}`, {
-        teachCompleted: true,
-        starsEarned: 2, // Earn 2 stars for completing teaching
-      });
+      try {
+        // Using the mock user ID = 1 since we removed auth dependency
+        const mockUserId = 1;
+        
+        console.log("Updating progress for teaching:", {
+          topicId,
+          userId: mockUserId,
+          teachCompleted: true,
+          starsEarned: 2
+        });
+        
+        return apiRequest("POST", `/api/progress/${topicId}`, {
+          userId: mockUserId,
+          teachCompleted: true,
+          starsEarned: 2, // Earn 2 stars for completing teaching
+        });
+      } catch (error) {
+        console.error("Error updating teaching progress:", error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Teaching progress updated successfully:", data);
       queryClient.invalidateQueries({ queryKey: [`/api/progress/${topicId}`] });
       
       // Also unlock the next topic if this is the first one
       if (topicId === 1) {
         unlockNextTopicMutation.mutate();
       }
+    },
+    onError: (error) => {
+      console.error("Failed to update teaching progress:", error);
     }
   });
   
   // Mutation to unlock the next topic
   const unlockNextTopicMutation = useMutation({
     mutationFn: async () => {
-      // For this example, we're unlocking topic ID 2 (assuming it exists)
-      return apiRequest("POST", "/api/topics/2/unlock", {});
+      try {
+        console.log("Unlocking next topic (ID: 2)");
+        // For this example, we're unlocking topic ID 2 (assuming it exists)
+        return apiRequest("POST", "/api/topics/2/unlock", {});
+      } catch (error) {
+        console.error("Error unlocking next topic:", error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Next topic unlocked successfully:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/topics"] });
+      
+      toast({
+        title: "New Topic Unlocked!",
+        description: "You've unlocked the next learning topic. Great job!",
+      });
+    },
+    onError: (error) => {
+      console.error("Failed to unlock next topic:", error);
     }
   });
   

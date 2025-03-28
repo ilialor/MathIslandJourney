@@ -10,7 +10,12 @@ export interface LearningStep {
 export interface IslandProps {
   id: string;
   name: string;
-  position: { top: string; left: string };
+  position: { 
+    top?: string; 
+    left?: string;
+    right?: string;
+    bottom?: string;
+  };
   size: { width: string; height: string };
   colors: {
     base: string;
