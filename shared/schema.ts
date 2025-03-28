@@ -52,6 +52,8 @@ export const progress = pgTable("progress", {
   practiceCompleted: boolean("practice_completed").default(false),
   teachCompleted: boolean("teach_completed").default(false),
   starsEarned: integer("stars_earned").default(0),
+  timeSpentMinutes: integer("time_spent_minutes").default(0),
+  testScore: integer("test_score"),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
@@ -63,6 +65,8 @@ export const insertProgressSchema = createInsertSchema(progress).pick({
   practiceCompleted: true,
   teachCompleted: true,
   starsEarned: true,
+  timeSpentMinutes: true,
+  testScore: true,
 });
 
 // Define the types

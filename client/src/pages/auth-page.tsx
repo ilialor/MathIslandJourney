@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
@@ -26,6 +26,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fadeIn, slideUp } from '@/utils/animation-utils';
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from '@/hooks/use-auth';
+import { Loader2 } from 'lucide-react';
 
 const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -47,8 +49,16 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { user, loginMutation, registerMutation, isLoading } = useAuth();
+  
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (user) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
   
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -70,21 +80,28 @@ export default function AuthPage() {
   });
   
   const onLoginSubmit = (values: LoginFormValues) => {
-    toast({
-      title: "Login submitted",
-      description: `Username: ${values.username}`,
+    loginMutation.mutate(values, {
+      onSuccess: () => {
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${values.username}!`,
+        });
+      }
     });
-    // Simulate successful login
-    setLocation("/");
   };
   
   const onRegisterSubmit = (values: RegisterFormValues) => {
-    toast({
-      title: "Registration submitted",
-      description: `Username: ${values.username}, Display Name: ${values.displayName}`,
+    // Need to remove confirmPassword as it's not in the database schema
+    const { confirmPassword, ...registerData } = values;
+    
+    registerMutation.mutate(registerData, {
+      onSuccess: () => {
+        toast({
+          title: "Registration successful",
+          description: `Welcome to AnimaLearn, ${values.displayName}!`,
+        });
+      }
     });
-    // Simulate successful registration
-    setLocation("/");
   };
   
   return (
@@ -147,8 +164,14 @@ export default function AuthPage() {
                         <Button 
                           type="submit" 
                           className="w-full bg-primary hover:bg-primary/90"
+                          disabled={loginMutation.isPending}
                         >
-                          {"Login"}
+                          {loginMutation.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Logging in...
+                            </>
+                          ) : "Login"}
                         </Button>
                       </form>
                     </Form>
@@ -249,8 +272,14 @@ export default function AuthPage() {
                         <Button 
                           type="submit"
                           className="w-full bg-primary hover:bg-primary/90"
+                          disabled={registerMutation.isPending}
                         >
-                          {"Register"}
+                          {registerMutation.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Creating account...
+                            </>
+                          ) : "Register"}
                         </Button>
                       </form>
                     </Form>

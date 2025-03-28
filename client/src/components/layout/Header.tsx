@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, Loader2 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { 
   DropdownMenu, 
@@ -9,20 +9,24 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Header() {
   const [, setLocation] = useLocation();
-  
-  // Mock user for testing, will be replaced with real authentication
-  const user = {
-    username: 'testuser',
-    displayName: 'Test User',
-    stars: 10
-  };
+  const { user, logoutMutation, isLoading } = useAuth();
+  const { toast } = useToast();
   
   const handleLogout = () => {
-    // Redirect to auth page instead of trying to use the auth hook
-    setLocation('/auth');
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast({
+          title: "Logged out",
+          description: "You have been successfully logged out",
+        });
+        setLocation('/auth');
+      }
+    });
   };
 
   return (
@@ -70,8 +74,18 @@ export default function Header() {
               className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary cursor-pointer"
             >
               <Avatar>
-                <AvatarImage src="https://ui-avatars.com/api/?name=Student&background=random" />
-                <AvatarFallback>{user?.displayName?.charAt(0) || user?.username?.charAt(0) || 'U'}</AvatarFallback>
+                <AvatarImage 
+                  src={user ? 
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.username)}&background=random` 
+                    : "https://ui-avatars.com/api/?name=User&background=random"} 
+                />
+                <AvatarFallback>
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    user?.displayName?.charAt(0) || user?.username?.charAt(0) || 'U'
+                  )}
+                </AvatarFallback>
               </Avatar>
             </motion.div>
           </DropdownMenuTrigger>
@@ -81,10 +95,25 @@ export default function Header() {
                 <DropdownMenuItem className="font-medium">
                   {user.displayName || user.username}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLocation('/parent-dashboard')}>
+                  Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={handleLogout}
+                  disabled={logoutMutation.isPending}
+                >
+                  {logoutMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Logging out...
+                    </>
+                  ) : 'Logout'}
+                </DropdownMenuItem>
               </>
             ) : (
-              <DropdownMenuItem>Login</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLocation('/auth')}>
+                Login
+              </DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>

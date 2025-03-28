@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get user progress
+  // Get all user progress (for current user)
   app.get("/api/progress", async (req, res) => {
     try {
       let userId: number;
@@ -79,6 +79,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching all progress:", error);
       res.status(500).json({ message: "Failed to fetch progress", error: String(error) });
+    }
+  });
+  
+  // Get progress for a specific user (for parent dashboard)
+  app.get("/api/progress/user/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // In a real app, we would check if the current user has permission to view this user's progress
+      // For now, we'll just allow it for our mock implementation
+      
+      console.log(`Fetching all progress for specific userId: ${userId}`);
+      const progress = await storage.getAllUserProgress(userId);
+      console.log(`Found ${progress.length} progress records for user ${userId}`);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error fetching user progress:", error);
+      res.status(500).json({ message: "Failed to fetch user progress", error: String(error) });
     }
   });
 

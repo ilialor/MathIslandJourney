@@ -48,6 +48,16 @@ export class MemStorage implements IStorage {
     
     // Initialize with default topics for grade 1
     this.initializeDefaultTopics();
+    
+    // Create a test user (sammy/password123)
+    this.createUser({
+      username: "sammy",
+      password: "47e08e336559243f6d4c77f7c88a42887acdb53a6654e80f0e4fc50cc937e6d28f9121abb60540cc861bb3e711c0e3a3502e19ffb69266c9d13a73ebd41564b0.36e16e0bac780eefa985c82cd67176e2",
+      displayName: "Sammy Student",
+      grade: 1
+    }).then(user => {
+      console.log("Created test user:", user.username);
+    });
   }
 
   // User methods
@@ -147,6 +157,8 @@ export class MemStorage implements IStorage {
           practiceCompleted: false,
           teachCompleted: false,
           starsEarned: 0,
+          timeSpentMinutes: 0,
+          testScore: null,
           updatedAt: new Date(),
         };
       }

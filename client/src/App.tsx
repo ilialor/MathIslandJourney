@@ -8,20 +8,27 @@ import LessonView from "@/pages/lesson-view";
 import TestView from "@/pages/test-view";
 import PracticeView from "@/pages/practice-view";
 import TeachView from "@/pages/teach-view";
+import ParentDashboard from "@/pages/parent-dashboard";
+import { ProtectedRoute } from "@/lib/protected-route";
+import { AuthProvider } from "@/hooks/use-auth";
+import { QueryProvider } from "@/lib/query-provider";
 
 function Router() {
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
-      <Route path="/" component={HomePage} />
-      <Route path="/navigation" component={NavigationView} />
-      <Route path="/topic/:id" component={NavigationView} />
+      <ProtectedRoute path="/" component={HomePage} />
+      <ProtectedRoute path="/navigation" component={NavigationView} />
+      <ProtectedRoute path="/topic/:id" component={NavigationView} />
       
       {/* Learning Workflow Routes */}
-      <Route path="/learn/:id" component={LessonView} />
-      <Route path="/test/:id" component={TestView} />
-      <Route path="/practice/:id" component={PracticeView} />
-      <Route path="/teach/:id" component={TeachView} />
+      <ProtectedRoute path="/learn/:id" component={LessonView} />
+      <ProtectedRoute path="/test/:id" component={TestView} />
+      <ProtectedRoute path="/practice/:id" component={PracticeView} />
+      <ProtectedRoute path="/teach/:id" component={TeachView} />
+      
+      {/* Parent Dashboard Route */}
+      <ProtectedRoute path="/parent-dashboard" component={ParentDashboard} />
       
       {/* Catch-all for 404 */}
       <Route path="/:rest*" component={NotFound} />
@@ -31,10 +38,12 @@ function Router() {
 
 function App() {
   return (
-    <>
-      <Router />
-      <Toaster />
-    </>
+    <QueryProvider>
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
+    </QueryProvider>
   );
 }
 
