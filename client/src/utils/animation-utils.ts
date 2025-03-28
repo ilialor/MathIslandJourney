@@ -1,17 +1,16 @@
+import { HTMLMotionProps } from 'framer-motion';
 import { AnimationProps } from "framer-motion";
 
 export const fadeIn: AnimationProps = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
-  exit: { opacity: 0 },
   transition: { duration: 0.3 }
 };
 
 export const slideUp: AnimationProps = {
-  initial: { y: 20, opacity: 0 },
-  animate: { y: 0, opacity: 1 },
-  exit: { y: 20, opacity: 0 },
-  transition: { duration: 0.3 }
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4 }
 };
 
 export const slideIn: AnimationProps = {
@@ -50,9 +49,13 @@ export const characterHover = {
   }
 };
 
-export const buttonPress = {
-  whileHover: { scale: 1.05 },
-  whileTap: { scale: 0.95 }
+export const buttonPress: HTMLMotionProps<"div"> = {
+  whileTap: { scale: 0.95 },
+  transition: { 
+    type: "spring",
+    stiffness: 400,
+    damping: 17
+  }
 };
 
 export const dragItem = {
