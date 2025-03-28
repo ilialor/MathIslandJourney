@@ -5,6 +5,7 @@ import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
 import NavigationView from "@/pages/navigation-view";
 import LessonView from "@/pages/lesson-view";
+import TestView from "@/pages/test-view";
 import PracticeView from "@/pages/practice-view";
 import TeachView from "@/pages/teach-view";
 
@@ -18,6 +19,7 @@ function Router() {
       
       {/* Learning Workflow Routes */}
       <Route path="/learn/:id" component={LessonView} />
+      <Route path="/test/:id" component={TestView} />
       <Route path="/practice/:id" component={PracticeView} />
       <Route path="/teach/:id" component={TeachView} />
       

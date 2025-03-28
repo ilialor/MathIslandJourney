@@ -117,10 +117,11 @@ export default function LessonView() {
   const handleCompleteLesson = () => {
     // Update progress first
     updateProgressMutation.mutate();
-    console.log(`Lesson completed, navigating to practice for topic ${topicId}`);
-    // Skip test for simplicity and go directly to practice
+    console.log(`Lesson completed, navigating to test for topic ${topicId}`);
+    
     try {
-      setLocation(`/practice/${topicId}`);
+      // Navigate to test view after completing lesson
+      setLocation(`/test/${topicId}`);
     } catch (error) {
       console.error("Navigation error:", error);
       // Fallback to topic view if navigation fails
@@ -238,7 +239,7 @@ export default function LessonView() {
                 disabled={!lessonCompleted}
               >
                 <ArrowRight className="h-4 w-4" />
-                <span>{lessonCompleted ? "Continue to Practice" : "Complete the lesson first"}</span>
+                <span>{lessonCompleted ? "Continue to Test" : "Complete the lesson first"}</span>
               </Button>
             </motion.div>
           </div>
