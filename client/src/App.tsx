@@ -30,6 +30,11 @@ function Router() {
       {/* Parent Dashboard Route */}
       <ProtectedRoute path="/parent-dashboard" component={ParentDashboard} />
       
+      {/* Bottom Navigation Routes */}
+      <ProtectedRoute path="/play" component={HomePage} /> {/* Placeholder - redirect to home for now */}
+      <ProtectedRoute path="/rewards" component={HomePage} /> {/* Placeholder - redirect to home for now */}
+      <ProtectedRoute path="/profile" component={ParentDashboard} /> {/* Use parent dashboard as profile for now */}
+      
       {/* Catch-all for 404 */}
       <Route path="/:rest*" component={NotFound} />
     </Switch>

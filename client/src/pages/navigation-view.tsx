@@ -74,12 +74,24 @@ export default function NavigationView() {
     if (!topicProgress?.watchCompleted) {
       setLocation(`/learn/${selectedTopic.id}`);
     } else if (!topicProgress?.testCompleted) {
-      // Test view would go here - for now we'll skip to practice
-      setLocation(`/practice/${selectedTopic.id}`);
+      setLocation(`/test/${selectedTopic.id}`);
     } else if (!topicProgress?.practiceCompleted) {
       setLocation(`/practice/${selectedTopic.id}`);
     } else if (!topicProgress?.teachCompleted) {
       setLocation(`/teach/${selectedTopic.id}`);
+    } else {
+      // All steps completed, find the next unlocked topic
+      const nextTopic = topics.find(topic => 
+        topic.id > selectedTopic.id && !topic.isLocked
+      );
+      
+      if (nextTopic) {
+        // Navigate to the next unlocked topic
+        setLocation(`/topic/${nextTopic.id}`);
+      } else {
+        // No next topic available, show a message or stay on current page
+        console.log("All available topics completed!");
+      }
     }
   };
   

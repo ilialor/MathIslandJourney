@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import TopicProgress from './TopicProgress';
 import { LearningStep } from '@/types';
 import { Topic, Progress } from '@shared/schema';
-import { Redo, Play } from 'lucide-react';
+import { Redo, Play, ArrowRight } from 'lucide-react';
 import { buttonPress } from '@/utils/animation-utils';
 import { Link } from 'wouter';
 
@@ -81,8 +81,17 @@ const TopicCard: React.FC<TopicCardProps> = ({
                   className="learn-button bg-primary hover:bg-primary/90 text-white font-heading font-bold py-3 px-6 rounded-full flex items-center gap-2 shadow-md"
                   onClick={onContinue}
                 >
-                  <Play className="h-4 w-4" />
-                  <span>Continue Learning</span>
+                  {currentStep === -1 ? (
+                    <>
+                      <ArrowRight className="h-4 w-4" />
+                      <span>Next Topic</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-4 w-4" />
+                      <span>Continue Learning</span>
+                    </>
+                  )}
                 </Button>
               </motion.div>
             </Link>

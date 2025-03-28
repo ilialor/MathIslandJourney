@@ -17,7 +17,7 @@ export default function BottomNavigation() {
     {
       icon: 'learn',
       label: 'Learn',
-      path: '/learn',
+      path: '/learn/1', // Default to topic ID 1 for the Numbers topic
       isActive: location.includes('/learn') || location.includes('/practice') || location.includes('/teach'),
     },
     {
