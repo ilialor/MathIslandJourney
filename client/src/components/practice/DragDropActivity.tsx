@@ -9,37 +9,64 @@ import { useToast } from '@/hooks/use-toast';
 interface DragDropActivityProps {
   onComplete: () => void;
   onReset: () => void;
+  topicId: number;
 }
 
-const DragDropActivity: React.FC<DragDropActivityProps> = ({ onComplete, onReset }) => {
+const DragDropActivity: React.FC<DragDropActivityProps> = ({ onComplete, onReset, topicId }) => {
   const { toast } = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const [currentDragItem, setCurrentDragItem] = useState<number | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   
+  // Numbers data for different topics
+  const numbersData = {
+    // Topic 1: Counting Numbers 1-10
+    1: [
+      { id: 1, value: 7, color: 'bg-[#82D8B9]' },
+      { id: 2, value: 2, color: 'bg-[#FFD166]' },
+      { id: 3, value: 9, color: 'bg-[#F25C5C]' },
+      { id: 4, value: 4, color: 'bg-primary' },
+      { id: 5, value: 10, color: 'bg-[#B088F9]' },
+      { id: 6, value: 5, color: 'bg-[#66C3FF]' },
+      { id: 7, value: 1, color: 'bg-accent' },
+      { id: 8, value: 8, color: 'bg-secondary' },
+      { id: 9, value: 3, color: 'bg-[#82D8B9]' },
+      { id: 10, value: 6, color: 'bg-primary' },
+    ],
+    // Topic 2: Numbers 11-20
+    2: [
+      { id: 1, value: 17, color: 'bg-[#82D8B9]' },
+      { id: 2, value: 12, color: 'bg-[#FFD166]' },
+      { id: 3, value: 19, color: 'bg-[#F25C5C]' },
+      { id: 4, value: 14, color: 'bg-primary' },
+      { id: 5, value: 20, color: 'bg-[#B088F9]' },
+      { id: 6, value: 15, color: 'bg-[#66C3FF]' },
+      { id: 7, value: 11, color: 'bg-accent' },
+      { id: 8, value: 18, color: 'bg-secondary' },
+      { id: 9, value: 13, color: 'bg-[#82D8B9]' },
+      { id: 10, value: 16, color: 'bg-primary' },
+    ]
+  };
+  
+  // Select the numbers based on the topicId
+  const topicNumbers = numbersData[topicId as keyof typeof numbersData] || numbersData[1];
+  
   // Initial numbers in shuffled order
-  const [numbers, setNumbers] = useState<DraggableNumber[]>([
-    { id: 1, value: 7, color: 'bg-[#82D8B9]' },
-    { id: 2, value: 2, color: 'bg-[#FFD166]' },
-    { id: 3, value: 9, color: 'bg-[#F25C5C]' },
-    { id: 4, value: 4, color: 'bg-primary' },
-    { id: 5, value: 10, color: 'bg-[#B088F9]' },
-    { id: 6, value: 5, color: 'bg-[#66C3FF]' },
-    { id: 7, value: 1, color: 'bg-accent' },
-    { id: 8, value: 8, color: 'bg-secondary' },
-    { id: 9, value: 3, color: 'bg-[#82D8B9]' },
-    { id: 10, value: 6, color: 'bg-primary' },
-  ]);
+  const [numbers, setNumbers] = useState<DraggableNumber[]>(topicNumbers);
   
   // Drop zones
-  const [dropZones, setDropZones] = useState<DropZone[]>(
-    Array.from({ length: 10 }, (_, i) => ({
+  const [dropZones, setDropZones] = useState<DropZone[]>(() => {
+    // For Topic 1, drop zones are positions 1-10
+    // For Topic 2, drop zones are positions 11-20
+    const startPosition = topicId === 1 ? 1 : 11;
+    
+    return Array.from({ length: 10 }, (_, i) => ({
       id: i + 1,
-      position: i + 1,
+      position: startPosition + i,
       isActive: false,
       containsItem: null,
-    }))
-  );
+    }));
+  });
   
   const handleDragStart = (numberId: number) => {
     setIsDragging(true);
@@ -157,10 +184,22 @@ const DragDropActivity: React.FC<DragDropActivityProps> = ({ onComplete, onReset
     onReset();
   };
   
+  // Get instruction text based on topic
+  const getInstructionText = () => {
+    if (topicId === 1) {
+      return "Drag each number from below and drop it into the correct spot to create the sequence from 1 to 10.";
+    } else if (topicId === 2) {
+      return "Drag each number from below and drop it into the correct spot to create the sequence from 11 to 20.";
+    }
+    return "Drag each number from below and drop it into the correct spot to create the sequence.";
+  };
+
+  const instructionText = getInstructionText();
+
   const playAudio = () => {
     toast({
       title: "Instructions",
-      description: "Drag each number from below and drop it into the correct spot to create the sequence from 1 to 10.",
+      description: instructionText,
     });
   };
   
@@ -184,7 +223,7 @@ const DragDropActivity: React.FC<DragDropActivityProps> = ({ onComplete, onReset
           <Volume2 className="text-2xl text-primary" />
         </motion.div>
         <div className="bg-background rounded-lg px-4 py-2 max-w-md">
-          <p className="text-gray-700">Drag each number from below and drop it into the correct spot to create the sequence from 1 to 10.</p>
+          <p className="text-gray-700">{instructionText}</p>
         </div>
       </div>
       

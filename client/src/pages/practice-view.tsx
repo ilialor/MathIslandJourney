@@ -120,6 +120,7 @@ export default function PracticeView() {
           <DragDropActivity 
             onComplete={handleActivityComplete}
             onReset={handleActivityReset}
+            topicId={topicId}
           />
         </motion.div>
       </motion.div>
