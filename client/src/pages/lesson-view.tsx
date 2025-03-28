@@ -26,19 +26,38 @@ export default function LessonView() {
     queryKey: [`/api/topics/${topicId}`],
   });
   
-  // Sample animation frames for numbers 1-10
-  const animationFrames = [
-    { number: 1, description: "This is the number one. It looks like a straight line." },
-    { number: 2, description: "This is the number two. It has a curve and a flat bottom." },
-    { number: 3, description: "This is the number three. It has two curves." },
-    { number: 4, description: "This is the number four. It has two straight lines and a connecting line." },
-    { number: 5, description: "This is the number five. It has a line and a curve." },
-    { number: 6, description: "This is the number six. It has a big curve." },
-    { number: 7, description: "This is the number seven. It has two straight lines." },
-    { number: 8, description: "This is the number eight. It looks like two circles on top of each other." },
-    { number: 9, description: "This is the number nine. It has a circle and a straight line." },
-    { number: 10, description: "This is the number ten. It's made up of a one and a zero next to each other." },
-  ];
+  // Lesson data for different topics
+  const lessonContent = {
+    // Topic 1: Counting Numbers 1-10
+    1: [
+      { number: 1, description: "This is the number one. It looks like a straight line." },
+      { number: 2, description: "This is the number two. It has a curve and a flat bottom." },
+      { number: 3, description: "This is the number three. It has two curves." },
+      { number: 4, description: "This is the number four. It has two straight lines and a connecting line." },
+      { number: 5, description: "This is the number five. It has a line and a curve." },
+      { number: 6, description: "This is the number six. It has a big curve." },
+      { number: 7, description: "This is the number seven. It has two straight lines." },
+      { number: 8, description: "This is the number eight. It looks like two circles on top of each other." },
+      { number: 9, description: "This is the number nine. It has a circle and a straight line." },
+      { number: 10, description: "This is the number ten. It's made up of a one and a zero next to each other." },
+    ],
+    // Topic 2: Numbers 11-20
+    2: [
+      { number: 11, description: "This is the number eleven. It's made up of two ones next to each other." },
+      { number: 12, description: "This is the number twelve. It has a one and a two together." },
+      { number: 13, description: "This is the number thirteen. It has a one and a three together." },
+      { number: 14, description: "This is the number fourteen. It has a one and a four together." },
+      { number: 15, description: "This is the number fifteen. It has a one and a five together." },
+      { number: 16, description: "This is the number sixteen. It has a one and a six together." },
+      { number: 17, description: "This is the number seventeen. It has a one and a seven together." },
+      { number: 18, description: "This is the number eighteen. It has a one and an eight together." },
+      { number: 19, description: "This is the number nineteen. It has a one and a nine together." },
+      { number: 20, description: "This is the number twenty. It has a two and a zero together." },
+    ],
+  };
+  
+  // Select the appropriate animation frames based on the topic ID
+  const animationFrames = lessonContent[topicId as keyof typeof lessonContent] || lessonContent[1];
   
   // Mutation to update progress
   const updateProgressMutation = useMutation({

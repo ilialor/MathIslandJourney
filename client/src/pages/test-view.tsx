@@ -28,34 +28,68 @@ export default function TestView() {
     queryKey: [`/api/topics/${topicId}`],
   });
   
-  // Sample quiz questions for numbers 1-10
-  const questions = [
-    {
-      question: "Which number comes after 3?",
-      options: ["2", "3", "4", "5"],
-      correctAnswer: 2 // Index of "4"
-    },
-    {
-      question: "Which number is bigger?",
-      options: ["7", "2", "5", "1"],
-      correctAnswer: 0 // Index of "7"
-    },
-    {
-      question: "How many fingers are on one hand?",
-      options: ["3", "5", "6", "10"],
-      correctAnswer: 1 // Index of "5"
-    },
-    {
-      question: "What number is this: 🔟?",
-      options: ["8", "9", "10", "11"],
-      correctAnswer: 2 // Index of "10"
-    },
-    {
-      question: "Count these dots: •••. How many dots are there?",
-      options: ["1", "2", "3", "4"],
-      correctAnswer: 2 // Index of "3"
-    }
-  ];
+  // Quiz questions for different topics
+  const quizContent = {
+    // Topic 1: Counting Numbers 1-10
+    1: [
+      {
+        question: "Which number comes after 3?",
+        options: ["2", "3", "4", "5"],
+        correctAnswer: 2 // Index of "4"
+      },
+      {
+        question: "Which number is bigger?",
+        options: ["7", "2", "5", "1"],
+        correctAnswer: 0 // Index of "7"
+      },
+      {
+        question: "How many fingers are on one hand?",
+        options: ["3", "5", "6", "10"],
+        correctAnswer: 1 // Index of "5"
+      },
+      {
+        question: "What number is this: 🔟?",
+        options: ["8", "9", "10", "11"],
+        correctAnswer: 2 // Index of "10"
+      },
+      {
+        question: "Count these dots: •••. How many dots are there?",
+        options: ["1", "2", "3", "4"],
+        correctAnswer: 2 // Index of "3"
+      }
+    ],
+    // Topic 2: Numbers 11-20
+    2: [
+      {
+        question: "Which number comes after 13?",
+        options: ["12", "13", "14", "15"],
+        correctAnswer: 2 // Index of "14"
+      },
+      {
+        question: "Which number is smaller?",
+        options: ["20", "15", "18", "11"],
+        correctAnswer: 3 // Index of "11"
+      },
+      {
+        question: "What number is one more than 19?",
+        options: ["18", "19", "20", "21"],
+        correctAnswer: 2 // Index of "20"
+      },
+      {
+        question: "What comes between 14 and 16?",
+        options: ["13", "15", "17", "19"],
+        correctAnswer: 1 // Index of "15"
+      },
+      {
+        question: "Which number is in the 'teens'?",
+        options: ["10", "11", "13", "20"],
+        correctAnswer: 2 // Index of "13"
+      }
+    ]
+  };
+  
+  // Select the appropriate questions based on the topic ID
+  const questions = quizContent[topicId as keyof typeof quizContent] || quizContent[1];
   
   // Mutation to update progress
   const updateProgressMutation = useMutation({
