@@ -7,6 +7,7 @@ import { ArrowLeft, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fadeIn, slideUp, buttonPress } from '@/utils/animation-utils';
 import { queryClient, apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 export default function TestView() {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,7 @@ export default function TestView() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [testCompleted, setTestCompleted] = useState(false);
+  const { toast } = useToast();
   
   // Fetch topic details
   const { 
@@ -82,6 +84,12 @@ export default function TestView() {
     onSuccess: (data) => {
       console.log("Test progress updated successfully:", data);
       queryClient.invalidateQueries({ queryKey: [`/api/progress/${topicId}`] });
+      
+      const passed = score >= questions.length * 0.7;
+      toast({
+        title: "Test completed!",
+        description: passed ? "Great job! You've earned a star. Moving to practice." : "Good effort. Let's move on to practice.",
+      });
     },
     onError: (error) => {
       console.error("Failed to update test progress:", error);
@@ -125,14 +133,17 @@ export default function TestView() {
     updateProgressMutation.mutate();
     console.log(`Test completed, navigating to practice for topic ${topicId}`);
     
-    try {
-      // Navigate to practice view after completing test
-      setLocation(`/practice/${topicId}`);
-    } catch (error) {
-      console.error("Navigation error:", error);
-      // Fallback to topic view if navigation fails
-      setLocation(`/topic/${topicId}`);
-    }
+    // Add a small delay to ensure the toast notification appears
+    setTimeout(() => {
+      try {
+        // Navigate to practice view after completing test
+        setLocation(`/practice/${topicId}`);
+      } catch (error) {
+        console.error("Navigation error:", error);
+        // Fallback to topic view if navigation fails
+        setLocation(`/topic/${topicId}`);
+      }
+    }, 300);
   };
   
   // Current question

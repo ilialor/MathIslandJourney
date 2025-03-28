@@ -7,6 +7,7 @@ import { ArrowLeft, Play, Pause, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fadeIn, slideUp, buttonPress } from '@/utils/animation-utils';
 import { queryClient, apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 export default function LessonView() {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +16,7 @@ export default function LessonView() {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [lessonCompleted, setLessonCompleted] = useState(false);
+  const { toast } = useToast();
   
   // Fetch topic details
   const { 
@@ -65,6 +67,11 @@ export default function LessonView() {
     onSuccess: (data) => {
       console.log("Progress updated successfully:", data);
       queryClient.invalidateQueries({ queryKey: [`/api/progress/${topicId}`] });
+      
+      toast({
+        title: "Lesson completed!",
+        description: "You've earned a star! Moving to the test phase.",
+      });
     },
     onError: (error) => {
       console.error("Failed to update progress:", error);
@@ -119,14 +126,17 @@ export default function LessonView() {
     updateProgressMutation.mutate();
     console.log(`Lesson completed, navigating to test for topic ${topicId}`);
     
-    try {
-      // Navigate to test view after completing lesson
-      setLocation(`/test/${topicId}`);
-    } catch (error) {
-      console.error("Navigation error:", error);
-      // Fallback to topic view if navigation fails
-      setLocation(`/topic/${topicId}`);
-    }
+    // Add a small delay to ensure the toast notification appears
+    setTimeout(() => {
+      try {
+        // Navigate to test view after completing lesson
+        setLocation(`/test/${topicId}`);
+      } catch (error) {
+        console.error("Navigation error:", error);
+        // Fallback to topic view if navigation fails
+        setLocation(`/topic/${topicId}`);
+      }
+    }, 300);
   };
   
   const currentAnimation = animationFrames[currentFrame];

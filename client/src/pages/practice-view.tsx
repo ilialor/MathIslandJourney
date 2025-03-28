@@ -8,11 +8,13 @@ import RootLayout from '@/components/layout/RootLayout';
 import DragDropActivity from '@/components/practice/DragDropActivity';
 import { fadeIn, slideUp } from '@/utils/animation-utils';
 import { queryClient, apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 export default function PracticeView() {
   const { id } = useParams<{ id: string }>();
   const topicId = parseInt(id);
   const [location, setLocation] = useLocation();
+  const { toast } = useToast();
   
   // Fetch topic details
   const { 
@@ -49,6 +51,11 @@ export default function PracticeView() {
     onSuccess: (data) => {
       console.log("Practice progress updated successfully:", data);
       queryClient.invalidateQueries({ queryKey: [`/api/progress/${topicId}`] });
+      
+      toast({
+        title: "Practice completed!",
+        description: "Good job! You've earned a star. Time to teach what you've learned!",
+      });
     },
     onError: (error) => {
       console.error("Failed to update practice progress:", error);
@@ -64,14 +71,17 @@ export default function PracticeView() {
     updateProgressMutation.mutate();
     console.log(`Practice completed, navigating to teach for topic ${topicId}`);
     
-    try {
-      // Navigate to teach view after completing practice
-      setLocation(`/teach/${topicId}`);
-    } catch (error) {
-      console.error("Navigation error:", error);
-      // Fallback to topic view if navigation fails
-      setLocation(`/topic/${topicId}`);
-    }
+    // Add a small delay to ensure the toast notification appears
+    setTimeout(() => {
+      try {
+        // Navigate to teach view after completing practice
+        setLocation(`/teach/${topicId}`);
+      } catch (error) {
+        console.error("Navigation error:", error);
+        // Fallback to topic view if navigation fails
+        setLocation(`/topic/${topicId}`);
+      }
+    }, 300);
   };
   
   const handleActivityReset = () => {

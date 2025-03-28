@@ -66,6 +66,11 @@ export default function TeachView() {
       console.log("Teaching progress updated successfully:", data);
       queryClient.invalidateQueries({ queryKey: [`/api/progress/${topicId}`] });
       
+      toast({
+        title: "Teaching completed!",
+        description: "Amazing job! You've earned 2 stars and unlocked the next topic!",
+      });
+      
       // Also unlock the next topic if this is the first one
       if (topicId === 1) {
         unlockNextTopicMutation.mutate();
@@ -141,14 +146,17 @@ export default function TeachView() {
     updateProgressMutation.mutate();
     console.log(`Teaching completed, navigating back to topic ${topicId}`);
     
-    try {
-      // Navigate back to the topic view
-      setLocation(`/topic/${topicId}`);
-    } catch (error) {
-      console.error("Navigation error:", error);
-      // Fallback to home if navigation fails
-      setLocation(`/`);
-    }
+    // Add a small delay to ensure the toast notification appears
+    setTimeout(() => {
+      try {
+        // Navigate back to the topic view
+        setLocation(`/topic/${topicId}`);
+      } catch (error) {
+        console.error("Navigation error:", error);
+        // Fallback to home if navigation fails
+        setLocation(`/`);
+      }
+    }, 300);
   };
   
   return (
