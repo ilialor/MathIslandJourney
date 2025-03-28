@@ -3,7 +3,6 @@ import { useParams, useLocation } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Topic, Progress } from '@shared/schema';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/hooks/use-auth';
 import IslandMap from '@/components/islands/IslandMap';
 import TopicCard from '@/components/learning/TopicCard';
 import { fadeIn, slideUp } from '@/utils/animation-utils';
@@ -13,8 +12,17 @@ export default function NavigationView() {
   const { id } = useParams<{ id?: string }>();
   const topicId = id ? parseInt(id) : undefined;
   const [location, setLocation] = useLocation();
-  const { user } = useAuth();
-  const [selectedGrade, setSelectedGrade] = useState<number>(user?.grade || 1);
+  
+  // Mock user for development
+  const mockUser = {
+    id: 1,
+    username: 'testuser',
+    displayName: 'Test User',
+    grade: 1,
+    stars: 0
+  };
+  
+  const [selectedGrade, setSelectedGrade] = useState<number>(mockUser.grade);
   
   // Fetch topics for the selected grade
   const { 
@@ -39,13 +47,13 @@ export default function NavigationView() {
     isLoading: isLoadingProgress
   } = useQuery<Progress>({
     queryKey: [`/api/progress/${topicId}`],
-    enabled: !!topicId && !!user,
+    enabled: !!topicId,
   });
   
   // Mutation to restart topic progress
   const restartProgressMutation = useMutation({
     mutationFn: async () => {
-      if (!topicId || !user) return;
+      if (!topicId) return;
       
       return apiRequest("POST", `/api/progress/${topicId}`, {
         watchCompleted: false,
