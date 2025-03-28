@@ -26,7 +26,8 @@ const TopicCard: React.FC<TopicCardProps> = ({
     if (!progress?.testCompleted) return `/test/${topic.id}`;
     if (!progress?.practiceCompleted) return `/practice/${topic.id}`;
     if (!progress?.teachCompleted) return `/teach/${topic.id}`;
-    return `/topic/${topic.id}`;
+    // For completed topics, we'll return '#' and handle navigation in onContinue
+    return `#`;
   };
   
   const steps: LearningStep[] = [
@@ -75,26 +76,34 @@ const TopicCard: React.FC<TopicCardProps> = ({
           
           {/* Action Buttons */}
           <div className="flex flex-wrap justify-center sm:justify-start gap-3">
-            <Link href={nextStepPath}>
+            {currentStep === -1 ? (
+              // Next Topic button - no Link wrapper for completed topics
               <motion.div {...buttonPress}>
                 <Button 
                   className="learn-button bg-primary hover:bg-primary/90 text-white font-heading font-bold py-3 px-6 rounded-full flex items-center gap-2 shadow-md"
-                  onClick={onContinue}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onContinue();
+                  }}
                 >
-                  {currentStep === -1 ? (
-                    <>
-                      <ArrowRight className="h-4 w-4" />
-                      <span>Next Topic</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-4 w-4" />
-                      <span>Continue Learning</span>
-                    </>
-                  )}
+                  <ArrowRight className="h-4 w-4" />
+                  <span>Next Topic</span>
                 </Button>
               </motion.div>
-            </Link>
+            ) : (
+              // Continue Learning button with Link wrapper
+              <Link href={nextStepPath}>
+                <motion.div {...buttonPress}>
+                  <Button 
+                    className="learn-button bg-primary hover:bg-primary/90 text-white font-heading font-bold py-3 px-6 rounded-full flex items-center gap-2 shadow-md"
+                    onClick={onContinue}
+                  >
+                    <Play className="h-4 w-4" />
+                    <span>Continue Learning</span>
+                  </Button>
+                </motion.div>
+              </Link>
+            )}
             
             <motion.div {...buttonPress}>
               <Button 

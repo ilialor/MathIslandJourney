@@ -1,5 +1,4 @@
-import { HTMLMotionProps } from 'framer-motion';
-import { AnimationProps } from "framer-motion";
+import { HTMLMotionProps, Variants, AnimationProps } from 'framer-motion';
 
 export const fadeIn: AnimationProps = {
   initial: { opacity: 0 },
@@ -11,6 +10,17 @@ export const slideUp: AnimationProps = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.4 }
+};
+
+// Variants for the pages that need them
+export const fadeInVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } }
+};
+
+export const slideUpVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
 };
 
 export const slideIn: AnimationProps = {

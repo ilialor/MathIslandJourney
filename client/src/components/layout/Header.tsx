@@ -56,8 +56,14 @@ export default function Header() {
             </div>
             
             <motion.div 
-              className="w-9 h-9 rounded-full bg-[#FFD166] flex items-center justify-center text-white relative"
+              className="w-9 h-9 rounded-full bg-[#FFD166] flex items-center justify-center text-white relative cursor-pointer"
               whileHover={{ y: -2 }}
+              onClick={() => {
+                toast({
+                  title: "Notifications",
+                  description: "You have 2 new achievements to unlock!",
+                });
+              }}
             >
               <Bell className="h-5 w-5 text-white" />
               <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">

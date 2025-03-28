@@ -71,26 +71,47 @@ export default function NavigationView() {
   const handleContinueLearning = () => {
     if (!selectedTopic) return;
     
-    if (!topicProgress?.watchCompleted) {
-      setLocation(`/learn/${selectedTopic.id}`);
-    } else if (!topicProgress?.testCompleted) {
-      setLocation(`/test/${selectedTopic.id}`);
-    } else if (!topicProgress?.practiceCompleted) {
-      setLocation(`/practice/${selectedTopic.id}`);
-    } else if (!topicProgress?.teachCompleted) {
-      setLocation(`/teach/${selectedTopic.id}`);
-    } else {
+    // Check if all learning steps are completed for this topic
+    const isTopicCompleted = 
+      topicProgress?.watchCompleted && 
+      topicProgress?.testCompleted && 
+      topicProgress?.practiceCompleted && 
+      topicProgress?.teachCompleted;
+      
+    if (isTopicCompleted) {
       // All steps completed, find the next unlocked topic
-      const nextTopic = topics.find(topic => 
-        topic.id > selectedTopic.id && !topic.isLocked
+      console.log("Finding next topic after topic ID:", selectedTopic.id);
+      console.log("Available topics:", topics);
+      
+      // Sort topics by their order to ensure we get the correct next topic
+      const sortedTopics = [...topics].sort((a, b) => a.order - b.order);
+      
+      // Find the next topic that's not locked
+      const nextTopic = sortedTopics.find(topic => 
+        topic.order > selectedTopic.order && !topic.isLocked
       );
+      
+      console.log("Next available topic:", nextTopic);
       
       if (nextTopic) {
         // Navigate to the next unlocked topic
+        console.log("Navigating to next topic:", nextTopic.id);
         setLocation(`/topic/${nextTopic.id}`);
       } else {
         // No next topic available, show a message or stay on current page
         console.log("All available topics completed!");
+        // Optional: Show a toast notification or modal
+      }
+    } else {
+      // Continue with the current topic's learning path
+      if (!topicProgress?.watchCompleted) {
+        setLocation(`/learn/${selectedTopic.id}`);
+      } else if (!topicProgress?.testCompleted) {
+        setLocation(`/test/${selectedTopic.id}`);
+      } else if (!topicProgress?.practiceCompleted) {
+        setLocation(`/practice/${selectedTopic.id}`);
+      } else if (!topicProgress?.teachCompleted) {
+        setLocation(`/teach/${selectedTopic.id}`);
       }
     }
   };

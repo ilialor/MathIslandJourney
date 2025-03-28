@@ -11,6 +11,7 @@ import {
   Settings,
   Calendar
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,6 +22,7 @@ import { User, Topic, Progress as ProgressType } from '@shared/schema';
 export default function ParentDashboard() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
+  const { toast } = useToast();
 
   // Fetch mock user data (ID = 1)
   const { data: user, isLoading: isLoadingUser } = useQuery<User>({
@@ -101,8 +103,26 @@ export default function ParentDashboard() {
       {...fadeIn}
     >
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-heading font-bold text-primary">Parent Dashboard</h1>
-        <Button variant="outline" onClick={handleSettingsClick}>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full"
+            onClick={() => setLocation('/')}
+          >
+            <ChevronRight className="h-5 w-5 transform rotate-180" />
+          </Button>
+          <h1 className="text-3xl font-heading font-bold text-primary">Parent Dashboard</h1>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => {
+            toast({
+              title: "Settings",
+              description: "Parental controls and settings will be available soon!",
+            });
+          }}
+        >
           <Settings className="h-4 w-4 mr-2" />
           Settings
         </Button>

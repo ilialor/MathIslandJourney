@@ -9,6 +9,8 @@ import TestView from "@/pages/test-view";
 import PracticeView from "@/pages/practice-view";
 import TeachView from "@/pages/teach-view";
 import ParentDashboard from "@/pages/parent-dashboard";
+import PlayPage from "@/pages/play-page";
+import RewardsPage from "@/pages/rewards-page";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { AuthProvider } from "@/hooks/use-auth";
 import { QueryProvider } from "@/lib/query-provider";
@@ -31,8 +33,8 @@ function Router() {
       <ProtectedRoute path="/parent-dashboard" component={ParentDashboard} />
       
       {/* Bottom Navigation Routes */}
-      <ProtectedRoute path="/play" component={HomePage} /> {/* Placeholder - redirect to home for now */}
-      <ProtectedRoute path="/rewards" component={HomePage} /> {/* Placeholder - redirect to home for now */}
+      <ProtectedRoute path="/play" component={PlayPage} />
+      <ProtectedRoute path="/rewards" component={RewardsPage} />
       <ProtectedRoute path="/profile" component={ParentDashboard} /> {/* Use parent dashboard as profile for now */}
       
       {/* Catch-all for 404 */}
