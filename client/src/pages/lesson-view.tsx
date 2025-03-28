@@ -115,9 +115,17 @@ export default function LessonView() {
   };
   
   const handleCompleteLesson = () => {
+    // Update progress first
     updateProgressMutation.mutate();
+    console.log(`Lesson completed, navigating to practice for topic ${topicId}`);
     // Skip test for simplicity and go directly to practice
-    setLocation(`/practice/${topicId}`);
+    try {
+      setLocation(`/practice/${topicId}`);
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback to topic view if navigation fails
+      setLocation(`/topic/${topicId}`);
+    }
   };
   
   const currentAnimation = animationFrames[currentFrame];

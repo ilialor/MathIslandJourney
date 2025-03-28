@@ -137,8 +137,18 @@ export default function TeachView() {
   };
   
   const handleCompleteTopic = () => {
+    // Update progress first
     updateProgressMutation.mutate();
-    setLocation(`/topic/${topicId}`);
+    console.log(`Teaching completed, navigating back to topic ${topicId}`);
+    
+    try {
+      // Navigate back to the topic view
+      setLocation(`/topic/${topicId}`);
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback to home if navigation fails
+      setLocation(`/`);
+    }
   };
   
   return (

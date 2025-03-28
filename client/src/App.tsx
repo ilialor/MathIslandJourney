@@ -15,10 +15,14 @@ function Router() {
       <Route path="/" component={HomePage} />
       <Route path="/navigation" component={NavigationView} />
       <Route path="/topic/:id" component={NavigationView} />
+      
+      {/* Learning Workflow Routes */}
       <Route path="/learn/:id" component={LessonView} />
       <Route path="/practice/:id" component={PracticeView} />
       <Route path="/teach/:id" component={TeachView} />
-      <Route component={NotFound} />
+      
+      {/* Catch-all for 404 */}
+      <Route path="/:rest*" component={NotFound} />
     </Switch>
   );
 }

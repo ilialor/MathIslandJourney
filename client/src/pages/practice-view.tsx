@@ -60,9 +60,18 @@ export default function PracticeView() {
   };
   
   const handleActivityComplete = () => {
+    // Update progress first
     updateProgressMutation.mutate();
-    // Navigate to teach view after completing practice
-    setLocation(`/teach/${topicId}`);
+    console.log(`Practice completed, navigating to teach for topic ${topicId}`);
+    
+    try {
+      // Navigate to teach view after completing practice
+      setLocation(`/teach/${topicId}`);
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback to topic view if navigation fails
+      setLocation(`/topic/${topicId}`);
+    }
   };
   
   const handleActivityReset = () => {

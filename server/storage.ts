@@ -116,42 +116,70 @@ export class MemStorage implements IStorage {
 
   // Progress methods
   async getProgressByUserAndTopic(userId: number, topicId: number): Promise<Progress | undefined> {
-    const key = `${userId}-${topicId}`;
-    return this.progressData.get(key);
+    try {
+      if (!userId) throw new Error("User ID is required");
+      if (!topicId) throw new Error("Topic ID is required");
+      
+      const key = `${userId}-${topicId}`;
+      return this.progressData.get(key);
+    } catch (error) {
+      console.error(`Error getting progress for user ${userId}, topic ${topicId}:`, error);
+      return undefined;
+    }
   }
 
   async updateProgress(userId: number, topicId: number, update: Partial<Omit<InsertProgress, 'userId' | 'topicId'>>): Promise<Progress | undefined> {
-    const key = `${userId}-${topicId}`;
-    let progress = this.progressData.get(key);
-    
-    if (!progress) {
-      progress = {
-        id: this.currentProgressId++,
-        userId,
-        topicId,
-        watchCompleted: false,
-        testCompleted: false,
-        practiceCompleted: false,
-        teachCompleted: false,
-        starsEarned: 0,
-        updatedAt: new Date(),
+    try {
+      if (!userId) throw new Error("User ID is required");
+      if (!topicId) throw new Error("Topic ID is required");
+      
+      const key = `${userId}-${topicId}`;
+      let progress = this.progressData.get(key);
+      
+      if (!progress) {
+        console.log(`Creating new progress record for user ${userId}, topic ${topicId}`);
+        progress = {
+          id: this.currentProgressId++,
+          userId,
+          topicId,
+          watchCompleted: false,
+          testCompleted: false,
+          practiceCompleted: false,
+          teachCompleted: false,
+          starsEarned: 0,
+          updatedAt: new Date(),
+        };
+      }
+      
+      const updatedProgress = { 
+        ...progress, 
+        ...update,
+        updatedAt: new Date()
       };
+      
+      this.progressData.set(key, updatedProgress);
+      console.log(`Progress updated for user ${userId}, topic ${topicId}:`, update);
+      return updatedProgress;
+    } catch (error) {
+      console.error(`Error updating progress for user ${userId}, topic ${topicId}:`, error);
+      return undefined;
     }
-    
-    const updatedProgress = { 
-      ...progress, 
-      ...update,
-      updatedAt: new Date()
-    };
-    
-    this.progressData.set(key, updatedProgress);
-    return updatedProgress;
   }
 
   async getAllUserProgress(userId: number): Promise<Progress[]> {
-    return Array.from(this.progressData.values()).filter(
-      (progress) => progress.userId === userId,
-    );
+    try {
+      if (!userId) throw new Error("User ID is required");
+      
+      const userProgress = Array.from(this.progressData.values()).filter(
+        (progress) => progress.userId === userId,
+      );
+      
+      console.log(`Retrieved ${userProgress.length} progress records for user ${userId}`);
+      return userProgress;
+    } catch (error) {
+      console.error(`Error retrieving all progress for user ${userId}:`, error);
+      return [];
+    }
   }
 
   // Helper methods to initialize default data
